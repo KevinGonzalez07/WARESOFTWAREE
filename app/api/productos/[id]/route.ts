@@ -1,9 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server'
 import prisma from '@/backend/prisma'
+import type { RouteHandlerContext } from 'next/dist/server/future/route-modules/app-route/module'
 
-// Actualizar producto
-export async function PUT(request: NextRequest, { params }: { params: { id: string } }) {
-  const id_producto = parseInt(params.id, 10)
+export async function PUT(request: NextRequest, context: RouteHandlerContext) {
+  const id_producto = parseInt(context.params.id, 10)
 
   if (isNaN(id_producto)) {
     return NextResponse.json({ error: 'ID inválido' }, { status: 400 })
@@ -35,9 +35,8 @@ export async function PUT(request: NextRequest, { params }: { params: { id: stri
   }
 }
 
-// Eliminar producto
-export async function DELETE(request: NextRequest, { params }: { params: { id: string } }) {
-  const id_producto = parseInt(params.id, 10)
+export async function DELETE(request: NextRequest, context: RouteHandlerContext) {
+  const id_producto = parseInt(context.params.id, 10)
 
   if (isNaN(id_producto)) {
     return NextResponse.json({ error: 'ID inválido' }, { status: 400 })
