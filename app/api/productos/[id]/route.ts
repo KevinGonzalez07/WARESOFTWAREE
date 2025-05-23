@@ -1,17 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server'
 import prisma from '@/backend/prisma'
 
-// Función auxiliar para extraer el ID de la URL
-function getIdFromRequest(request: NextRequest): number | null {
-  const idStr = request.nextUrl.pathname.split('/').pop()
-  const id = Number(idStr)
-  return isNaN(id) ? null : id
-}
-
 // PUT
-export async function PUT(request: NextRequest) {
-  const id_producto = getIdFromRequest(request)
-  if (id_producto === null) {
+export async function PUT(request: NextRequest, { params }: { params: { id: string } }) {
+  const id_producto = parseInt(params.id, 10)
+  if (isNaN(id_producto)) {
     return NextResponse.json({ error: 'ID inválido' }, { status: 400 })
   }
 
@@ -42,9 +35,9 @@ export async function PUT(request: NextRequest) {
 }
 
 // DELETE
-export async function DELETE(request: NextRequest) {
-  const id_producto = getIdFromRequest(request)
-  if (id_producto === null) {
+export async function DELETE(request: NextRequest, { params }: { params: { id: string } }) {
+  const id_producto = parseInt(params.id, 10)
+  if (isNaN(id_producto)) {
     return NextResponse.json({ error: 'ID inválido' }, { status: 400 })
   }
 
