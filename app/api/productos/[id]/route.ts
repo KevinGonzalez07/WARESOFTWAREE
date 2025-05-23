@@ -1,18 +1,26 @@
-import { NextResponse } from 'next/server'
+import { NextRequest, NextResponse } from 'next/server'
 import prisma from '@/backend/prisma'
 
-export async function PUT(req: Request, { params }: { params: { id: string } }) {
-  const id_producto = parseInt(params.id);
+// Función auxiliar para extraer el ID de la URL
+function getIdFromRequest(request: NextRequest): number | null {
+  const idStr = request.nextUrl.pathname.split('/').pop()
+  const id = Number(idStr)
+  return isNaN(id) ? null : id
+}
+
+// PUT
+export async function PUT(request: NextRequest) {
+  const id_producto = getIdFromRequest(request)
+  if (id_producto === null) {
+    return NextResponse.json({ error: 'ID inválido' }, { status: 400 })
+  }
 
   try {
-    const body = await req.json();
-    const { nombre, descripcion, existencia, imagen, id_proveedor } = body;
+    const body = await request.json()
+    const { nombre, descripcion, existencia, imagen, id_proveedor } = body
 
-    if (
-      !nombre || !descripcion || !imagen ||
-      isNaN(existencia) || isNaN(id_proveedor)
-    ) {
-      return NextResponse.json({ error: 'Datos inválidos o incompletos' }, { status: 400 });
+    if (!nombre || !descripcion || !imagen || isNaN(existencia) || isNaN(id_proveedor)) {
+      return NextResponse.json({ error: 'Datos inválidos o incompletos' }, { status: 400 })
     }
 
     const updated = await prisma.producto.update({
@@ -24,30 +32,30 @@ export async function PUT(req: Request, { params }: { params: { id: string } }) 
         imagen,
         id_proveedor,
       },
-    });
+    })
 
-    return NextResponse.json(updated);
+    return NextResponse.json(updated)
   } catch (error) {
-    console.error('Error al actualizar producto:', error);
-    return NextResponse.json({ error: 'Error al actualizar producto' }, { status: 500 });
+    console.error('Error al actualizar producto:', error)
+    return NextResponse.json({ error: 'Error al actualizar producto' }, { status: 500 })
   }
 }
 
-export async function DELETE(_: Request, { params }: { params: { id: string } }) {
-  const id_producto = parseInt(params.id);
-
-  if (isNaN(id_producto)) {
-    return NextResponse.json({ error: 'ID inválido' }, { status: 400 });
+// DELETE
+export async function DELETE(request: NextRequest) {
+  const id_producto = getIdFromRequest(request)
+  if (id_producto === null) {
+    return NextResponse.json({ error: 'ID inválido' }, { status: 400 })
   }
 
   try {
     await prisma.producto.delete({
       where: { id_producto },
-    });
+    })
 
-    return NextResponse.json({ message: 'Producto eliminado correctamente' });
+    return NextResponse.json({ message: 'Producto eliminado correctamente' })
   } catch (error) {
-    console.error('Error al eliminar producto:', error);
-    return NextResponse.json({ error: 'Error al eliminar producto' }, { status: 500 });
+    console.error('Error al eliminar producto:', error)
+    return NextResponse.json({ error: 'Error al eliminar producto' }, { status: 500 })
   }
 }

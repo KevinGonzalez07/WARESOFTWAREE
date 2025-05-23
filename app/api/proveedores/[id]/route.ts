@@ -1,11 +1,21 @@
-import { NextResponse } from 'next/server'
+import { NextRequest, NextResponse } from 'next/server'
 import prisma from '@/backend/prisma'
 
-export async function PUT(req: Request, { params }: { params: { id: string } }) {
-  const id = parseInt(params.id)
+// Extraer ID de la URL
+function getIdFromRequest(request: NextRequest): number | null {
+  const idStr = request.nextUrl.pathname.split('/').pop()
+  const id = Number(idStr)
+  return isNaN(id) ? null : id
+}
+
+export async function PUT(request: NextRequest) {
+  const id = getIdFromRequest(request)
+  if (id === null) {
+    return NextResponse.json({ error: 'ID inválido' }, { status: 400 })
+  }
 
   try {
-    const body = await req.json()
+    const body = await request.json()
     const { nombre, direccion, telefono } = body
 
     if (!nombre || !direccion || !telefono) {
