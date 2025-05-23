@@ -5,14 +5,17 @@ import UserState from "@/components/UserState";
 import { Space_Mono } from "next/font/google";
 import Link from "next/link";
 
-const spaceMono = Space_Mono({
-  weight: ["400", "700"],
-  subsets: ["latin"],
-});
+// 👇 define el tipo correcto
+interface ProductPageProps {
+  params: {
+    id: string;
+  };
+}
 
-export default async function ProductPage({ params }: { params: { id: string } }) {
+// 👇 este tipo es el correcto para páginas en App Router
+export default async function ProductPage({ params }: ProductPageProps) {
   const id = Number(params.id);
-
+  
   const producto = await prisma.producto.findUnique({
     where: { id_producto: id },
     include: {
@@ -21,7 +24,8 @@ export default async function ProductPage({ params }: { params: { id: string } }
     },
   });
 
-  if (!producto) notFound();
+  if (!producto) return notFound();
+
 
   return (
     <main className="flex h-screen">
