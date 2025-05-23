@@ -1,8 +1,16 @@
 import { NextRequest, NextResponse } from 'next/server'
 import prisma from '@/backend/prisma'
 
-export async function PUT(request: NextRequest, context: { params: { id: string } }) {
+// Definir manualmente el tipo de contexto que Next.js espera
+interface Context {
+  params: {
+    id: string
+  }
+}
+
+export async function PUT(request: NextRequest, context: Context) {
   const id_producto = parseInt(context.params.id, 10)
+
   if (isNaN(id_producto)) {
     return NextResponse.json({ error: 'ID inválido' }, { status: 400 })
   }
@@ -11,7 +19,7 @@ export async function PUT(request: NextRequest, context: { params: { id: string 
     const body = await request.json()
     const { nombre, descripcion, existencia, imagen, id_proveedor } = body
 
-    if (!nombre || !descripcion || !imagen || isNaN(existencia) || isNaN(id_proveedor)) {
+    if (!nombre || !descripcion || !imagen || isNaN(Number(existencia)) || isNaN(Number(id_proveedor))) {
       return NextResponse.json({ error: 'Datos inválidos o incompletos' }, { status: 400 })
     }
 
@@ -20,21 +28,22 @@ export async function PUT(request: NextRequest, context: { params: { id: string 
       data: {
         nombre,
         descripcion,
-        existencia,
+        existencia: Number(existencia),
         imagen,
-        id_proveedor,
+        id_proveedor: Number(id_proveedor),
       },
     })
 
     return NextResponse.json(updated)
-  } catch (error) {
+  } catch (error: any) {
     console.error('Error al actualizar producto:', error)
-    return NextResponse.json({ error: 'Error al actualizar producto' }, { status: 500 })
+    return NextResponse.json({ error: 'Error al actualizar producto', detalles: error.message }, { status: 500 })
   }
 }
 
-export async function DELETE(request: NextRequest, context: { params: { id: string } }) {
+export async function DELETE(request: NextRequest, context: Context) {
   const id_producto = parseInt(context.params.id, 10)
+
   if (isNaN(id_producto)) {
     return NextResponse.json({ error: 'ID inválido' }, { status: 400 })
   }
@@ -45,8 +54,8 @@ export async function DELETE(request: NextRequest, context: { params: { id: stri
     })
 
     return NextResponse.json({ message: 'Producto eliminado correctamente' })
-  } catch (error) {
+  } catch (error: any) {
     console.error('Error al eliminar producto:', error)
-    return NextResponse.json({ error: 'Error al eliminar producto' }, { status: 500 })
+    return NextResponse.json({ error: 'Error al eliminar producto', detalles: error.message }, { status: 500 })
   }
 }
