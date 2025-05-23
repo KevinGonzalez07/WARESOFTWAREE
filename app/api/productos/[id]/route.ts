@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import prisma from '@/backend/prisma'
 
-// PUT: Actualizar producto
+// Actualizar producto
 export async function PUT(request: NextRequest, { params }: { params: { id: string } }) {
   const id_producto = parseInt(params.id, 10)
 
@@ -35,7 +35,7 @@ export async function PUT(request: NextRequest, { params }: { params: { id: stri
   }
 }
 
-// DELETE: Eliminar producto
+// Eliminar producto
 export async function DELETE(request: NextRequest, { params }: { params: { id: string } }) {
   const id_producto = parseInt(params.id, 10)
 
