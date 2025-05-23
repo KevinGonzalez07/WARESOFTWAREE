@@ -1,9 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server'
 import prisma from '@/backend/prisma'
 
-// PUT
-export async function PUT(request: NextRequest, { params }: { params: { id: string } }) {
-  const id_producto = parseInt(params.id, 10)
+export async function PUT(request: NextRequest, context: { params: { id: string } }) {
+  const id_producto = parseInt(context.params.id, 10)
   if (isNaN(id_producto)) {
     return NextResponse.json({ error: 'ID inválido' }, { status: 400 })
   }
@@ -34,9 +33,8 @@ export async function PUT(request: NextRequest, { params }: { params: { id: stri
   }
 }
 
-// DELETE
-export async function DELETE(request: NextRequest, { params }: { params: { id: string } }) {
-  const id_producto = parseInt(params.id, 10)
+export async function DELETE(request: NextRequest, context: { params: { id: string } }) {
+  const id_producto = parseInt(context.params.id, 10)
   if (isNaN(id_producto)) {
     return NextResponse.json({ error: 'ID inválido' }, { status: 400 })
   }
