@@ -3,23 +3,16 @@ import prisma from "@/backend/prisma";
 import Sidebar from "@/components/Sidebar";
 import UserState from "@/components/UserState";
 import { Space_Mono } from "next/font/google";
-import Link from "next/link";
+import type { Metadata } from "next"; // si vas a usarlo
+import type { PageProps } from "next"; // ✅ usa este tipo
 
-// ✅ Carga la fuente correctamente
 const spaceMono = Space_Mono({
   weight: ["400", "700"],
   subsets: ["latin"],
 });
 
-// ✅ Define el tipo de props correctamente
-interface ProductPageProps {
-  params: {
-    id: string;
-  };
-}
-
-// ✅ Función de la página
-export default async function ProductPage({ params }: ProductPageProps) {
+// ✅ usa PageProps y accede params directamente
+export default async function ProductPage({ params }: PageProps) {
   const id = Number(params.id);
 
   const producto = await prisma.producto.findUnique({
