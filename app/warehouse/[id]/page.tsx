@@ -1,34 +1,34 @@
+// app/warehouse/[id]/page.tsx
+
 import { notFound } from "next/navigation";
 import prisma from "@/backend/prisma";
 import Sidebar from "@/components/Sidebar";
 import UserState from "@/components/UserState";
 import WarehouseView from "@/components/WarehouseView";
 import { Space_Mono } from "next/font/google";
+import { type PageProps } from "next";
 
 const spaceMono = Space_Mono({
   weight: ["400", "700"],
   subsets: ["latin"],
 });
 
+// Color ID to RGB mapping
 const colorMap = [
-  "", // índice 0 no usado
-  "rgb(93, 120, 219)",  // 1 Azul
-  "rgb(235, 71, 71)",   // 2 Rojo
-  "rgb(255, 204, 0)",   // 3 Amarillo
-  "rgb(153, 102, 51)",  // 4 Marrón
-  "rgb(0, 204, 255)",   // 5 Aqua
-  "rgb(40, 167, 69)",   // 6 Verde
-  "rgb(255, 145, 68)",  // 7 Naranja
-  "rgb(111, 66, 193)",  // 8 Púrpura
-  "rgb(255, 99, 132)",  // 9 Rosado
-  "rgb(108, 117, 125)", // 10 Gris
+  '', // placeholder for index 0
+  'rgb(93, 120, 219)',  // 1 Blue
+  'rgb(235, 71, 71)',     // 2 Red
+  'rgb(255, 204, 0)',   // 3 Yellow
+  'rgb(153, 102, 51)',  // 4 Brown
+  'rgb(0, 204, 255)',   // 5 Aqua
+  'rgb(40, 167, 69)',   // 6 Green
+  'rgb(255, 145, 68)',   // 7 Orange
+  'rgb(111, 66, 193)',  // 8 Purple
+  'rgb(255, 99, 132)',  // 9 Pink
+  'rgb(108, 117, 125)', // 10 Gray
 ];
 
-export default async function WarehousePage({
-  params,
-}: {
-  params: { id: string };
-}) {
+export default async function WarehousePage({ params }: PageProps<{ id: string }>) {
   const id = Number(params.id);
 
   const almacen = await prisma.almacen.findUnique({
@@ -40,14 +40,13 @@ export default async function WarehousePage({
     },
   });
 
-  if (!almacen) return notFound();
+  if (!almacen) notFound();
 
   const backgroundColor = colorMap[almacen.color] || "white";
 
   return (
     <main className="flex h-screen bg-white">
       <Sidebar />
-
       <div className="flex-1 flex flex-col overflow-auto">
         <header className="flex justify-between items-center p-4 bg-white">
           <h1 className={`${spaceMono.className} text-black text-3xl font-bold`}>
