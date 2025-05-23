@@ -52,8 +52,10 @@ model Proveedor{
   productos Producto[]
 }
 
-model Log{
-  id_logs Int @id @default(autoincrement())
-  descripcion String
-  fecha DateTime
+
+model Log {
+  id_logs             Int      @id @default(autoincrement())
+  descripcion         String
+  fecha               DateTime
+  id_productoalmacen  Int
 }
