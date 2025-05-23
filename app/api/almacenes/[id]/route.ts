@@ -1,13 +1,17 @@
-import { NextResponse } from 'next/server'
+import { NextRequest, NextResponse } from 'next/server'
 import prisma from '@/backend/prisma'
 
+// Función auxiliar para extraer el ID de la ruta
+function getIdFromRequest(request: NextRequest): number | null {
+  const idStr = request.nextUrl.pathname.split('/').pop()
+  const id = Number(idStr)
+  return isNaN(id) ? null : id
+}
+
 // GET
-export async function GET(
-  _request: Request,
-  { params }: { params: { id: string } }
-) {
-  const id = Number(params.id)
-  if (isNaN(id)) return NextResponse.json({ error: 'ID inválido' }, { status: 400 })
+export async function GET(request: NextRequest) {
+  const id = getIdFromRequest(request)
+  if (id === null) return NextResponse.json({ error: 'ID inválido' }, { status: 400 })
 
   try {
     const almacen = await prisma.almacen.findUnique({
@@ -26,15 +30,13 @@ export async function GET(
 }
 
 // PUT
-export async function PUT(
-  req: Request,
-  { params }: { params: { id: string } }
-) {
-  const id = Number(params.id)
-  if (isNaN(id)) return NextResponse.json({ error: 'ID inválido' }, { status: 400 })
+export async function PUT(request: NextRequest) {
+  const id = getIdFromRequest(request)
+  if (id === null) return NextResponse.json({ error: 'ID inválido' }, { status: 400 })
 
-  const body = await req.json()
+  const body = await request.json()
   const { nombre, descripcion, color } = body
+
   if (!nombre || !descripcion || color === undefined)
     return NextResponse.json({ error: 'Faltan campos' }, { status: 400 })
 
@@ -50,17 +52,14 @@ export async function PUT(
 }
 
 // DELETE
-export async function DELETE(
-  _req: Request,
-  { params }: { params: { id: string } }
-) {
-  const id = Number(params.id)
-  if (isNaN(id)) return NextResponse.json({ error: "ID inválido" }, { status: 400 })
+export async function DELETE(request: NextRequest) {
+  const id = getIdFromRequest(request)
+  if (id === null) return NextResponse.json({ error: 'ID inválido' }, { status: 400 })
 
   try {
     const deleted = await prisma.almacen.delete({ where: { id_almacen: id } })
     return NextResponse.json(deleted)
   } catch (error: any) {
-    return NextResponse.json({ error: "No se pudo eliminar", detalles: error.message }, { status: 500 })
+    return NextResponse.json({ error: 'No se pudo eliminar', detalles: error.message }, { status: 500 })
   }
 }
