@@ -5,17 +5,23 @@ import UserState from "@/components/UserState";
 import { Space_Mono } from "next/font/google";
 import Link from "next/link";
 
-// 👇 define el tipo correcto
+// ✅ Carga la fuente correctamente
+const spaceMono = Space_Mono({
+  weight: ["400", "700"],
+  subsets: ["latin"],
+});
+
+// ✅ Define el tipo de props correctamente
 interface ProductPageProps {
   params: {
     id: string;
   };
 }
 
-// 👇 este tipo es el correcto para páginas en App Router
+// ✅ Función de la página
 export default async function ProductPage({ params }: ProductPageProps) {
   const id = Number(params.id);
-  
+
   const producto = await prisma.producto.findUnique({
     where: { id_producto: id },
     include: {
@@ -25,7 +31,6 @@ export default async function ProductPage({ params }: ProductPageProps) {
   });
 
   if (!producto) return notFound();
-
 
   return (
     <main className="flex h-screen">
@@ -50,7 +55,6 @@ export default async function ProductPage({ params }: ProductPageProps) {
             className="rounded-3xl m-6 p-6 pl-10"
             style={{ marginLeft: "120px" }}
           >
-            
             <h2
               className="text-3xl font-bold bg-gray-300 rounded-full px-4 py-1 inline-block mb-4"
               style={{ color: "black", fontSize: 30 }}
@@ -78,7 +82,6 @@ export default async function ProductPage({ params }: ProductPageProps) {
               <p className="text-sm text-gray-600">{producto.proveedor?.telefono || "Sin teléfono"}</p>
             </div>
 
-            {/* Mostrar la imagen del producto */}
             <div className="mb-6">
               <strong className="text-lg text-black">Imagen:</strong>
               <img
