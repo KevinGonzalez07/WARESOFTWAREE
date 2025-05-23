@@ -1,6 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server'
 import prisma from '@/backend/prisma'
-import type { RouteHandlerContext } from 'next/dist/server/future/route-modules/app-route/module'
+import { NextRequest, NextResponse } from 'next/server';
+import prisma from '@/backend/prisma';
+
+export async function PUT(request: NextRequest, { params }: { params: { id: string } }) {
+  const id_producto = parseInt(params.id, 10);
 
 export async function PUT(request: NextRequest, context: RouteHandlerContext) {
   const id_producto = parseInt(context.params.id, 10)
