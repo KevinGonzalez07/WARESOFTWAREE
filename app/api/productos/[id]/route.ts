@@ -1,15 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server'
 import prisma from '@/backend/prisma'
 
-// Definir manualmente el tipo de contexto que Next.js espera
-interface Context {
-  params: {
-    id: string
-  }
-}
-
-export async function PUT(request: NextRequest, context: Context) {
-  const id_producto = parseInt(context.params.id, 10)
+// PUT: Actualizar producto
+export async function PUT(request: NextRequest, { params }: { params: { id: string } }) {
+  const id_producto = parseInt(params.id, 10)
 
   if (isNaN(id_producto)) {
     return NextResponse.json({ error: 'ID inválido' }, { status: 400 })
@@ -41,8 +35,9 @@ export async function PUT(request: NextRequest, context: Context) {
   }
 }
 
-export async function DELETE(request: NextRequest, context: Context) {
-  const id_producto = parseInt(context.params.id, 10)
+// DELETE: Eliminar producto
+export async function DELETE(request: NextRequest, { params }: { params: { id: string } }) {
+  const id_producto = parseInt(params.id, 10)
 
   if (isNaN(id_producto)) {
     return NextResponse.json({ error: 'ID inválido' }, { status: 400 })
