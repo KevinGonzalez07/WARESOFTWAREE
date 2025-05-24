@@ -4,7 +4,7 @@ import prisma from '@/app/api/backend/prisma'
 
 // GET: Obtener un almacén por ID
 export async function GET(
-  request: NextRequest,
+  request: Request,
   { params }: { params: { id: string } }
 ) {
   const id = Number(params.id)
@@ -28,7 +28,7 @@ export async function GET(
 
 // PUT: Actualizar un almacén por ID
 export async function PUT(
-  request: NextRequest,
+  request: Request,
   { params }: { params: { id: string } }
 ) {
   const id = Number(params.id)
@@ -53,7 +53,7 @@ export async function PUT(
 
 // DELETE: Eliminar un almacén por ID
 export async function DELETE(
-  request: NextRequest,
+  request: Request,
   { params }: { params: { id: string } }
 ) {
   const id = Number(params.id)
