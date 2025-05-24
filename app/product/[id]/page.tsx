@@ -85,11 +85,15 @@ export default async function ProductPage({
 
             <div className="mb-6">
               <strong className="text-lg text-black">Imagen:</strong>
+              {producto.imagen ? (
               <img
-                src={producto.imagen}
-                alt={producto.nombre}
-                className="max-w-sm rounded-lg border shadow-md"
-              />
+              src={producto.imagen}
+              alt={producto.nombre}
+             className="max-w-sm rounded-lg border shadow-md"
+             />
+             ) : (
+               <p className="text-gray-600">Sin imagen disponible</p>
+          )}
             </div>
           </section>
         </div>
