@@ -3,16 +3,14 @@ import prisma from "@/backend/prisma";
 import Sidebar from "@/components/Sidebar";
 import UserState from "@/components/UserState";
 import { Space_Mono } from "next/font/google";
-import type { Metadata } from "next"; // si vas a usarlo
-import type { PageProps } from "next"; // ✅ usa este tipo
+import Link from "next/link";
 
 const spaceMono = Space_Mono({
   weight: ["400", "700"],
   subsets: ["latin"],
 });
 
-// ✅ usa PageProps y accede params directamente
-export default async function ProductPage({ params }: PageProps) {
+export default async function ProductPage({ params }: { params: { id: string } }) {
   const id = Number(params.id);
 
   const producto = await prisma.producto.findUnique({
@@ -23,7 +21,7 @@ export default async function ProductPage({ params }: PageProps) {
     },
   });
 
-  if (!producto) return notFound();
+  if (!producto) notFound();
 
   return (
     <main className="flex h-screen">
@@ -48,6 +46,7 @@ export default async function ProductPage({ params }: PageProps) {
             className="rounded-3xl m-6 p-6 pl-10"
             style={{ marginLeft: "120px" }}
           >
+            
             <h2
               className="text-3xl font-bold bg-gray-300 rounded-full px-4 py-1 inline-block mb-4"
               style={{ color: "black", fontSize: 30 }}
@@ -75,6 +74,7 @@ export default async function ProductPage({ params }: PageProps) {
               <p className="text-sm text-gray-600">{producto.proveedor?.telefono || "Sin teléfono"}</p>
             </div>
 
+            {/* Mostrar la imagen del producto */}
             <div className="mb-6">
               <strong className="text-lg text-black">Imagen:</strong>
               <img

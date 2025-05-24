@@ -1,20 +1,17 @@
-import { NextRequest, NextResponse } from 'next/server';
-import prisma from '@/backend/prisma';
-import { RouteHandlerContext } from 'next/dist/server/future/route-handlers/route-handler';
+import { NextResponse } from 'next/server'
+import prisma from '@/backend/prisma'
 
-// PUT /api/productos/[id]
-export async function PUT(request: NextRequest, context: RouteHandlerContext) {
-  const id_producto = parseInt(context.params.id, 10);
-
-  if (isNaN(id_producto)) {
-    return NextResponse.json({ error: 'ID inválido' }, { status: 400 });
-  }
+export async function PUT(req: Request, { params }: { params: { id: string } }) {
+  const id_producto = parseInt(params.id);
 
   try {
-    const body = await request.json();
+    const body = await req.json();
     const { nombre, descripcion, existencia, imagen, id_proveedor } = body;
 
-    if (!nombre || !descripcion || !imagen || isNaN(Number(existencia)) || isNaN(Number(id_proveedor))) {
+    if (
+      !nombre || !descripcion || !imagen ||
+      isNaN(existencia) || isNaN(id_proveedor)
+    ) {
       return NextResponse.json({ error: 'Datos inválidos o incompletos' }, { status: 400 });
     }
 
@@ -23,22 +20,21 @@ export async function PUT(request: NextRequest, context: RouteHandlerContext) {
       data: {
         nombre,
         descripcion,
-        existencia: Number(existencia),
+        existencia,
         imagen,
-        id_proveedor: Number(id_proveedor),
+        id_proveedor,
       },
     });
 
     return NextResponse.json(updated);
-  } catch (error: any) {
+  } catch (error) {
     console.error('Error al actualizar producto:', error);
-    return NextResponse.json({ error: 'Error al actualizar producto', detalles: error.message }, { status: 500 });
+    return NextResponse.json({ error: 'Error al actualizar producto' }, { status: 500 });
   }
 }
 
-// DELETE /api/productos/[id]
-export async function DELETE(request: NextRequest, context: RouteHandlerContext) {
-  const id_producto = parseInt(context.params.id, 10);
+export async function DELETE(_: Request, { params }: { params: { id: string } }) {
+  const id_producto = parseInt(params.id);
 
   if (isNaN(id_producto)) {
     return NextResponse.json({ error: 'ID inválido' }, { status: 400 });
@@ -50,8 +46,8 @@ export async function DELETE(request: NextRequest, context: RouteHandlerContext)
     });
 
     return NextResponse.json({ message: 'Producto eliminado correctamente' });
-  } catch (error: any) {
+  } catch (error) {
     console.error('Error al eliminar producto:', error);
-    return NextResponse.json({ error: 'Error al eliminar producto', detalles: error.message }, { status: 500 });
+    return NextResponse.json({ error: 'Error al eliminar producto' }, { status: 500 });
   }
 }

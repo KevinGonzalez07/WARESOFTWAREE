@@ -1,12 +1,9 @@
-// app/warehouse/[id]/page.tsx
-
 import { notFound } from "next/navigation";
 import prisma from "@/backend/prisma";
 import Sidebar from "@/components/Sidebar";
 import UserState from "@/components/UserState";
 import WarehouseView from "@/components/WarehouseView";
 import { Space_Mono } from "next/font/google";
-import { type PageProps } from "next";
 
 const spaceMono = Space_Mono({
   weight: ["400", "700"],
@@ -28,7 +25,7 @@ const colorMap = [
   'rgb(108, 117, 125)', // 10 Gray
 ];
 
-export default async function WarehousePage({ params }: PageProps<{ id: string }>) {
+export default async function WarehousePage({ params }: { params: { id: string } }) {
   const id = Number(params.id);
 
   const almacen = await prisma.almacen.findUnique({
@@ -47,6 +44,7 @@ export default async function WarehousePage({ params }: PageProps<{ id: string }
   return (
     <main className="flex h-screen bg-white">
       <Sidebar />
+
       <div className="flex-1 flex flex-col overflow-auto">
         <header className="flex justify-between items-center p-4 bg-white">
           <h1 className={`${spaceMono.className} text-black text-3xl font-bold`}>
@@ -55,18 +53,20 @@ export default async function WarehousePage({ params }: PageProps<{ id: string }
           <UserState />
         </header>
 
-        <div className="flex-1 overflow-auto flex justify-center items-start p-10">
-          <div
-            style={{ backgroundColor }}
-            className="rounded-3xl shadow-xl p-8"
-          >
-            <WarehouseView
-              nombreAlmacen={almacen.nombre}
-              descripcionAlmacen={almacen.descripcion}
-              productos={almacen.productos}
-            />
-          </div>
-        </div>
+              <div className="flex-1 overflow-auto flex justify-center items-start p-10">
+                <div
+                  style={{ backgroundColor }}
+                  className="rounded-3xl shadow-xl p-8"
+                >
+                  <WarehouseView
+                      nombreAlmacen={almacen.nombre}
+                      descripcionAlmacen={almacen.descripcion}
+                      productos={almacen.productos}
+                    />
+
+                </div>
+              </div>
+
       </div>
     </main>
   );
