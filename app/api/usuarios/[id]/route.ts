@@ -1,7 +1,7 @@
 // app/api/usuarios/[id]/route.ts
 
 import { NextRequest, NextResponse } from 'next/server';
-import prisma from '@/backend/prisma';
+import prisma from '@/app/api/backend/prisma';
 
 // GET: Obtener clave del usuario
 export async function GET(req: Request, { params }: { params: { id: string } }) {

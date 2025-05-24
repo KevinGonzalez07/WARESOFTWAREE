@@ -1,5 +1,5 @@
 import { notFound } from "next/navigation";
-import prisma from "@/backend/prisma";
+import prisma from "@/app/api/backend/prisma";
 import Sidebar from "@/components/Sidebar";
 import UserState from "@/components/UserState";
 import WarehouseView from "@/components/WarehouseView";

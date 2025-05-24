@@ -1,6 +1,6 @@
 // app/api/productos/route.ts
 import { NextRequest, NextResponse } from 'next/server'
-import prisma from '@/backend/prisma'
+import prisma from '@/app/api/backend/prisma'
 
 export async function POST(req: NextRequest) {
   try {

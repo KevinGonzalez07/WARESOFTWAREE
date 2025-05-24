@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server'
-import prisma from '@/backend/prisma'
+import prisma from '@/app/api/backend/prisma'
 import { NextApiRequest, NextApiResponse } from 'next'
 
 // GET: Obtener un almacén por ID
@@ -96,7 +96,7 @@ export async function DELETE(
 }
 
 // pages/api/almacenes.ts
-import { getAlmacenes } from "@/backend/prisma";
+import { getAlmacenes } from "@/app/api/backend/prisma";
 
 export default async function handler(
   req: NextApiRequest,

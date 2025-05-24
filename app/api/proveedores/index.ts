@@ -1,4 +1,4 @@
-import prisma from "@/backend/prisma";
+import prisma from "@/app/api/backend/prisma";
 import type { NextApiRequest, NextApiResponse } from "next";
 
 export default async function funciones (req: NextApiRequest, res: NextApiResponse){
