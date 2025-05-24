@@ -1,32 +1,52 @@
-import { NextRequest, NextResponse } from 'next/server';
-import prisma from '@/app/api/backend/prisma';
+// app/api/usuarios/[id]/pin/route.ts
+import { NextRequest, NextResponse } from 'next/server'
+import prisma from '@/app/api/backend/prisma'
 
-export async function PUT(request: NextRequest, { params }: { params: { id: string } }) {
-  const id = parseInt(params.id, 10);
-  const { oldPin, newPin } = await request.json();
+export const runtime = 'nodejs'
 
-  // Buscar al usuario
+export async function PUT(
+  request: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
+): Promise<NextResponse> {
+  // 1. Esperamos a que se resuelvan los params
+  const { id } = await params
+  const numericId = parseInt(id, 10)
+  if (isNaN(numericId)) {
+    return NextResponse.json({ error: 'ID inválido' }, { status: 400 })
+  }
+
+  // 2. Extraemos oldPin y newPin del body
+  const { oldPin, newPin } = await request.json()
+  const oldPinNum = parseInt(oldPin, 10)
+  const newPinNum = parseInt(newPin, 10)
+  if (isNaN(oldPinNum) || isNaN(newPinNum)) {
+    return NextResponse.json({ error: 'PINs inválidos' }, { status: 400 })
+  }
+
+  // 3. Buscar al usuario
   const usuario = await prisma.usuario.findUnique({
-    where: { id_usuario: id },
-  });
-
+    where: { id_usuario: numericId },
+  })
   if (!usuario) {
-    return NextResponse.json({ error: 'Usuario no encontrado' }, { status: 404 });
+    return NextResponse.json({ error: 'Usuario no encontrado' }, { status: 404 })
   }
 
-  // Verificar el PIN actual
-  if (usuario.clave !== parseInt(oldPin, 10)) {
-    return NextResponse.json({ error: 'PIN incorrecto' }, { status: 401 });
+  // 4. Verificar el PIN actual
+  if (usuario.clave !== oldPinNum) {
+    return NextResponse.json({ error: 'PIN incorrecto' }, { status: 401 })
   }
 
-  // Actualizar el PIN directamente (como número)
+  // 5. Actualizar el PIN
   const usuarioActualizado = await prisma.usuario.update({
-    where: { id_usuario: id },
-    data: { clave: parseInt(newPin, 10) },
-  });
+    where: { id_usuario: numericId },
+    data: { clave: newPinNum },
+  })
 
-  return NextResponse.json({
-    mensaje: 'PIN actualizado correctamente',
-    usuario: usuarioActualizado,
-  });
+  return NextResponse.json(
+    {
+      mensaje: 'PIN actualizado correctamente',
+      usuario: usuarioActualizado,
+    },
+    { status: 200 }
+  )
 }
