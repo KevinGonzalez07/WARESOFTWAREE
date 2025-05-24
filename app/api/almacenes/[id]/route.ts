@@ -1,19 +1,24 @@
 // app/api/almacenes/[id]/route.ts
-import { NextResponse, NextRequest } from 'next/server'
+import { NextRequest, NextResponse } from 'next/server'
 import prisma from '@/lib/prisma'
 
 export const runtime = 'nodejs'
 
 // GET: Obtener un almacén por ID
-export async function GET(request: NextRequest, { params }: { params: { id: string } }) {
-  const id = Number(params.id)
-  if (isNaN(id)) {
+export async function GET(
+  request: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
+): Promise<NextResponse> {
+  // 1. Esperamos a que se resuelvan los params
+  const { id } = await params
+  const numericId = Number(id)
+  if (isNaN(numericId)) {
     return NextResponse.json({ error: 'ID inválido' }, { status: 400 })
   }
 
   try {
     const almacen = await prisma.almacen.findUnique({
-      where: { id_almacen: id },
+      where: { id_almacen: numericId },
       include: { productos: { include: { proveedor: true } } },
     })
     if (!almacen) {
@@ -27,9 +32,13 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
 }
 
 // PUT: Actualizar un almacén por ID
-export async function PUT(request: NextRequest, { params }: { params: { id: string } }) {
-  const id = Number(params.id)
-  if (isNaN(id)) {
+export async function PUT(
+  request: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
+): Promise<NextResponse> {
+  const { id } = await params
+  const numericId = Number(id)
+  if (isNaN(numericId)) {
     return NextResponse.json({ error: 'ID inválido' }, { status: 400 })
   }
 
@@ -40,7 +49,7 @@ export async function PUT(request: NextRequest, { params }: { params: { id: stri
 
   try {
     const updated = await prisma.almacen.update({
-      where: { id_almacen: id },
+      where: { id_almacen: numericId },
       data: { nombre, descripcion, color: parseInt(color, 10) },
     })
     return NextResponse.json(updated)
@@ -54,14 +63,18 @@ export async function PUT(request: NextRequest, { params }: { params: { id: stri
 }
 
 // DELETE: Eliminar un almacén por ID
-export async function DELETE(request: NextRequest, { params }: { params: { id: string } }) {
-  const id = Number(params.id)
-  if (isNaN(id)) {
+export async function DELETE(
+  request: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
+): Promise<NextResponse> {
+  const { id } = await params
+  const numericId = Number(id)
+  if (isNaN(numericId)) {
     return NextResponse.json({ error: 'ID inválido' }, { status: 400 })
   }
 
   try {
-    const deleted = await prisma.almacen.delete({ where: { id_almacen: id } })
+    const deleted = await prisma.almacen.delete({ where: { id_almacen: numericId } })
     return NextResponse.json(deleted)
   } catch (error: any) {
     console.error('Error al eliminar el almacén:', error)
