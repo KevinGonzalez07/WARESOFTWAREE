@@ -1,5 +1,3 @@
-// app/warehouse/[id]/page.tsx
-
 import { notFound } from "next/navigation";
 import prisma from "@/app/api/backend/prisma";
 import Sidebar from "@/components/Sidebar";
@@ -32,25 +30,28 @@ export default async function WarehousePage({
 }: {
   params: Promise<{ id: string }>;
 }) {
-  // 1. Obtener y parsear el id
   const { id: idStr } = await params;
   const id = Number(idStr);
   if (isNaN(id)) notFound();
 
-  // 2. Consultar Prisma
   const almacen = await prisma.almacen.findUnique({
     where: { id_almacen: id },
     include: { productos: { include: { proveedor: true } } },
   });
+
   if (!almacen) notFound();
 
-  // 3. Determinar color de fondo
+  // Transformar imagen null a string vacía para evitar errores de tipo
+  const productosTransformados = almacen.productos.map(producto => ({
+    ...producto,
+    imagen: producto.imagen ?? "", // si es null, lo convierte a ""
+  }));
+
   const backgroundColor = colorMap[almacen.color] || "white";
 
   return (
     <main className="flex h-screen bg-white">
       <Sidebar />
-
       <div className="flex-1 flex flex-col overflow-auto">
         <header className="flex justify-between items-center p-4 bg-white">
           <h1 className={`${spaceMono.className} text-black text-3xl font-bold`}>
@@ -58,13 +59,12 @@ export default async function WarehousePage({
           </h1>
           <UserState />
         </header>
-
         <div className="flex-1 overflow-auto flex justify-center items-start p-10">
           <div style={{ backgroundColor }} className="rounded-3xl shadow-xl p-8">
             <WarehouseView
               nombreAlmacen={almacen.nombre}
               descripcionAlmacen={almacen.descripcion}
-              productos={almacen.productos}
+              productos={productosTransformados}
             />
           </div>
         </div>
