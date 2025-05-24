@@ -56,4 +56,7 @@ model Log{
   id_logs Int @id @default(autoincrement())
   descripcion String
   fecha DateTime
+  id_producto Int
+  id_almacen Int
+  id_productoalmacen Int
 }
