@@ -38,7 +38,7 @@ model Producto {
   nombre       String
   descripcion  String
   existencia   Int
-  imagen       String
+  imagen       String?
   id_almacen   Int
   almacen      Almacen   @relation(fields: [id_almacen], references: [id_almacen], onDelete: Cascade)
   id_proveedor Int
