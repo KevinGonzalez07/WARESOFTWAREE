@@ -1,7 +1,12 @@
-import { NextResponse } from 'next/server'
+
+import { NextRequest, NextResponse } from 'next/server'
 import prisma from '@/app/api/backend/prisma'
 
-export async function GET(_request: Request, { params }: { params: { id: string } }) {
+// GET: Obtener un almacén por ID
+export async function GET(
+  request: NextRequest,
+  { params }: { params: { id: string } }
+) {
   const id = Number(params.id)
   if (isNaN(id)) {
     return NextResponse.json({ error: 'ID inválido' }, { status: 400 })
@@ -21,12 +26,16 @@ export async function GET(_request: Request, { params }: { params: { id: string 
   }
 }
 
-export async function PUT(req: Request, { params }: { params: { id: string } }) {
+// PUT: Actualizar un almacén por ID
+export async function PUT(
+  request: NextRequest,
+  { params }: { params: { id: string } }
+) {
   const id = Number(params.id)
   if (isNaN(id)) {
     return NextResponse.json({ error: 'ID inválido' }, { status: 400 })
   }
-  const { nombre, descripcion, color } = await req.json()
+  const { nombre, descripcion, color } = await request.json()
   if (!nombre || !descripcion || color === undefined) {
     return NextResponse.json({ error: 'Faltan campos obligatorios' }, { status: 400 })
   }
@@ -42,7 +51,11 @@ export async function PUT(req: Request, { params }: { params: { id: string } }) 
   }
 }
 
-export async function DELETE(_req: Request, { params }: { params: { id: string } }) {
+// DELETE: Eliminar un almacén por ID
+export async function DELETE(
+  request: NextRequest,
+  { params }: { params: { id: string } }
+) {
   const id = Number(params.id)
   if (isNaN(id)) {
     return NextResponse.json({ error: 'ID inválido' }, { status: 400 })
