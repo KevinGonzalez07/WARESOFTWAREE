@@ -1,21 +1,27 @@
 import { NextResponse } from "next/server";
 import prisma from "@/app/api/backend/prisma";
 
-// Obtener un log por ID
-export async function GET(request: Request, { params }: { params: { id: string } }) {
+// GET: obtener log por ID
+export async function GET(
+  request: Request,
+  { params }: { params: { id: string } }
+) {
   const { id } = params;
 
-  const historial = await prisma.log.findUnique({
+  const log = await prisma.log.findUnique({
     where: { id_logs: Number(id) },
   });
 
-  return historial
-    ? NextResponse.json(historial)
+  return log
+    ? NextResponse.json(log)
     : NextResponse.json({ mensaje: "No se encontró el log" }, { status: 404 });
 }
 
-// Actualizar un log por ID
-export async function PUT(request: Request, { params }: { params: { id: string } }) {
+// PUT: actualizar log por ID
+export async function PUT(
+  request: Request,
+  { params }: { params: { id: string } }
+) {
   const { id } = params;
   const body = await request.json();
   const { id_producto, id_almacen, descripcion, fecha } = body;
@@ -39,7 +45,6 @@ export async function PUT(request: Request, { params }: { params: { id: string }
         fecha: new Date(fecha),
       },
     });
-
     return NextResponse.json(logActualizado);
   } catch (error: any) {
     console.error("Error al actualizar log:", error);
@@ -47,14 +52,20 @@ export async function PUT(request: Request, { params }: { params: { id: string }
   }
 }
 
-// Eliminar un log por ID
-export async function DELETE(request: Request, { params }: { params: { id: string } }) {
+// DELETE: eliminar log por ID
+export async function DELETE(
+  request: Request,
+  { params }: { params: { id: string } }
+) {
   const { id } = params;
 
   try {
     await prisma.log.delete({ where: { id_logs: Number(id) } });
-    return new Response(null, { status: 204 });
+    return new NextResponse(null, { status: 204 });
   } catch (error: any) {
-    return NextResponse.json({ error: "Error al momento de eliminar el log" }, { status: 500 });
+    return NextResponse.json(
+      { error: "Error al eliminar el log" },
+      { status: 500 }
+    );
   }
 }
