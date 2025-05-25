@@ -1,71 +1,60 @@
-import { NextResponse } from "next/server";
-import prisma from "@/app/api/backend/prisma";
+import { NextRequest, NextResponse } from 'next/server'
+import prisma from '@/app/api/backend/prisma'
 
-// GET: obtener log por ID
+export const runtime = 'nodejs'
+
+// GET: Obtener un log por ID
 export async function GET(
-  request: Request,
-  { params }: { params: { id: string } }
-) {
-  const { id } = params;
+  request: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
+): Promise<NextResponse> {
+  const { id } = await params
+  const numericId = Number(id)
 
-  const log = await prisma.log.findUnique({
-    where: { id_logs: Number(id) },
-  });
-
-  return log
-    ? NextResponse.json(log)
-    : NextResponse.json({ mensaje: "No se encontró el log" }, { status: 404 });
-}
-
-// PUT: actualizar log por ID
-export async function PUT(
-  request: Request,
-  { params }: { params: { id: string } }
-) {
-  const { id } = params;
-  const body = await request.json();
-  const { id_producto, id_almacen, descripcion, fecha } = body;
-
-  if (
-    isNaN(Number(id_producto)) ||
-    isNaN(Number(id_almacen)) ||
-    !descripcion ||
-    !fecha
-  ) {
-    return NextResponse.json({ error: "Datos inválidos o incompletos" }, { status: 400 });
+  if (isNaN(numericId)) {
+    return NextResponse.json({ error: 'ID inválido' }, { status: 400 })
   }
 
   try {
-    const logActualizado = await prisma.log.update({
-      where: { id_logs: Number(id) },
-      data: {
-        id_producto: Number(id_producto),
-        id_almacen: Number(id_almacen),
-        descripcion,
-        fecha: new Date(fecha),
+    const log = await prisma.log.findUnique({
+      where: { id_logs: numericId },
+      include: {
+        producto: true,
+        almacen: true,
       },
-    });
-    return NextResponse.json(logActualizado);
+    })
+
+    if (!log) {
+      return NextResponse.json({ error: 'Log no encontrado' }, { status: 404 })
+    }
+
+    return NextResponse.json(log)
   } catch (error: any) {
-    console.error("Error al actualizar log:", error);
-    return NextResponse.json({ error: "Error al actualizar" }, { status: 500 });
+    console.error('Error al obtener el log:', error)
+    return NextResponse.json({ error: 'Error del servidor', detalles: error.message }, { status: 500 })
   }
 }
 
-// DELETE: eliminar log por ID
+// DELETE: Eliminar un log por ID
 export async function DELETE(
-  request: Request,
-  { params }: { params: { id: string } }
-) {
-  const { id } = params;
+  request: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
+): Promise<NextResponse> {
+  const { id } = await params
+  const numericId = Number(id)
+
+  if (isNaN(numericId)) {
+    return NextResponse.json({ error: 'ID inválido' }, { status: 400 })
+  }
 
   try {
-    await prisma.log.delete({ where: { id_logs: Number(id) } });
-    return new NextResponse(null, { status: 204 });
+    const deleted = await prisma.log.delete({
+      where: { id_logs: numericId },
+    })
+
+    return NextResponse.json(deleted)
   } catch (error: any) {
-    return NextResponse.json(
-      { error: "Error al eliminar el log" },
-      { status: 500 }
-    );
+    console.error('Error al eliminar el log:', error)
+    return NextResponse.json({ error: 'No se pudo eliminar', detalles: error.message }, { status: 500 })
   }
 }
